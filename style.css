@@ -307,6 +307,36 @@ input, textarea { font-family: inherit; }
   transform: translateY(-2px);
 }
 
+.btn-cv {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: linear-gradient(135deg, var(--accent-secondary), #d48a00);
+  color: #040810;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 50px;
+  transition: transform var(--transition), box-shadow var(--transition);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.btn-cv svg {
+  width: 18px; height: 18px;
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-cv:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(240, 165, 0, 0.45);
+}
+
+.btn-cv:hover svg {
+  transform: translateY(3px);
+}
+
 /* ------ Hero Section ------ */
 .hero {
   position: relative;
@@ -783,7 +813,14 @@ input, textarea { font-family: inherit; }
 .lang-level.proficient { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
 .lang-level.basic { background: rgba(240, 165, 0, 0.15); color: var(--accent-secondary); }
 
-.about-cta { margin-top: 0.5rem; }
+.about-cta { margin-top: 0; }
+
+.about-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
 
 /* ------ Experience Section ------ */
 .experience-section { background: var(--bg-primary); }
