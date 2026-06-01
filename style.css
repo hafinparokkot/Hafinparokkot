@@ -1799,8 +1799,8 @@ input, textarea { font-family: inherit; }
   .container { padding: 0 1.25rem; }
   .navbar { padding: 0 1.25rem; }
   .hero-content { padding: 0 1.25rem; padding-top: 90px; }
-  .hero-ctas { flex-direction: column; }
-  .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-outline, .btn-cv, .btn-linkedin { width: 100%; justify-content: center; }
   .contact-form-wrap { padding: 1.5rem; }
 }
 
