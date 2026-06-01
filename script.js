@@ -268,29 +268,69 @@
     });
   });
 
-  /* ---- Contact Form ---- */
-  const form = document.getElementById('contactForm');
+  /* ---- Contact Form (EmailJS v4) ---- */
+  // ⚙️  REPLACE these three values with your own EmailJS credentials:
+  const EMAILJS_PUBLIC_KEY  = 'cH8XIgAVO7nNV5Lh_';
+  const EMAILJS_SERVICE_ID  = 'service_9dylheq';
+  const EMAILJS_TEMPLATE_ID = 'template_n3j7lrm';
+
+  // Initialise EmailJS with your public key
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  const form       = document.getElementById('contactForm');
   const successMsg = document.getElementById('formSuccess');
+  const errorMsg   = document.getElementById('formError');
 
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      // Honeypot check – abort silently if a bot filled the hidden field
+      if (document.getElementById('_honey').value) return;
+
       const btn = document.getElementById('form-submit-btn');
+      const originalBtnHTML = btn.innerHTML;
+
+      // Loading state
       btn.innerHTML = '<span>Sending…</span>';
-      btn.disabled = true;
+      btn.disabled  = true;
       btn.style.opacity = '0.7';
 
-      setTimeout(() => {
-        btn.innerHTML = '<span>Send Message</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        successMsg.style.display = 'block';
-        form.reset();
+      // Hide any previous status messages
+      successMsg.style.display = 'none';
+      errorMsg.style.display   = 'none';
 
-        setTimeout(() => {
-          successMsg.style.display = 'none';
-        }, 5000);
-      }, 1500);
+      // Collect form values into the template params EmailJS will use
+      const templateParams = {
+        from_name : document.getElementById('cf-name').value.trim(),
+        from_email: document.getElementById('cf-email').value.trim(),
+        subject   : document.getElementById('cf-subject').value.trim() || '(No subject)',
+        message   : document.getElementById('cf-message').value.trim(),
+        reply_to  : document.getElementById('cf-email').value.trim(),
+      };
+
+      emailjs
+        .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(() => {
+          // ✅ Success
+          successMsg.style.display = 'block';
+          form.reset();
+          setTimeout(() => { successMsg.style.display = 'none'; }, 6000);
+        })
+        .catch((err) => {
+          // ❌ Failure – show error and let user try again
+          console.error('EmailJS error:', err);
+          errorMsg.style.display = 'block';
+          setTimeout(() => { errorMsg.style.display = 'none'; }, 8000);
+        })
+        .finally(() => {
+          // Re-enable button regardless of outcome
+          btn.innerHTML    = originalBtnHTML;
+          btn.disabled     = false;
+          btn.style.opacity = '1';
+        });
     });
   }
 

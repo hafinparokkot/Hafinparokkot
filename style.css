@@ -1603,6 +1603,24 @@ input, textarea { font-family: inherit; }
   display: none;
 }
 
+.form-error {
+  font-size: 0.9rem;
+  color: #f87171;
+  text-align: center;
+  padding: 0.75rem;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: var(--radius-md);
+  display: none;
+}
+
+.form-error a {
+  color: #f87171;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ------ Footer ------ */
 .footer {
   background: var(--bg-secondary);
