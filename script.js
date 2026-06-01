@@ -220,7 +220,7 @@
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const cards = entry.target.querySelectorAll(
-            '.edu-card, .cert-card, .project-card, .skill-category, .org-card, .ach-item, .lang-item'
+            '.edu-card, .cert-card, .project-card, .skill-category, .org-card, .ach-item, .lang-item, .testimonial-card'
           );
           cards.forEach((card, i) => {
             setTimeout(() => {
@@ -244,6 +244,7 @@
     '.org-card',
     '.ach-item',
     '.lang-item',
+    '.testimonial-card',
   ].forEach((selector) => {
     document.querySelectorAll(selector).forEach((el) => {
       el.style.opacity = '0';
@@ -260,6 +261,7 @@
     '.org-list',
     '.ach-list',
     '.lang-grid',
+    '.testimonials-grid',
   ].forEach((selector) => {
     document.querySelectorAll(selector).forEach((el) => {
       cardObserver.observe(el);
