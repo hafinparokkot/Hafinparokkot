@@ -476,7 +476,7 @@
     setTimeout(typeEffect, 1200);
   }
 
-  /* ---- Certificate Filter Tabs ---- */
+  /* ---- Certificate Filter ---- */
   const certFilters = document.querySelectorAll('.cert-filter');
   const certCards = document.querySelectorAll('.cert-card[data-filter-group]');
 
@@ -503,6 +503,103 @@
         }
       });
     });
+  });
+
+  /* ---- Experience Photo Modals ---- */
+  const photoModalOverlays = document.querySelectorAll('.photo-modal-overlay');
+  const lightbox = document.getElementById('photoLightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  // Helper: open a modal
+  function openModal(modalId) {
+    const overlay = document.getElementById(modalId);
+    if (!overlay) return;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Focus trap: focus the close button
+    const closeBtn = overlay.querySelector('[data-close-modal]');
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 50);
+  }
+
+  // Helper: close a modal
+  function closeModal(overlay) {
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    // Only restore scroll if no other modals are open
+    const anyOpen = document.querySelector('.photo-modal-overlay.active');
+    if (!anyOpen && !lightbox.classList.contains('active')) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  // Helper: open lightbox
+  function openLightbox(src, alt) {
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => lightboxClose.focus(), 50);
+  }
+
+  // Helper: close lightbox
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    lightboxImg.src = '';
+    const anyOpen = document.querySelector('.photo-modal-overlay.active');
+    if (!anyOpen) document.body.style.overflow = '';
+  }
+
+  // Wire "View Photos" buttons
+  document.querySelectorAll('[data-modal]').forEach((btn) => {
+    btn.addEventListener('click', () => openModal(btn.dataset.modal));
+  });
+
+  // Wire close buttons inside modals
+  document.querySelectorAll('[data-close-modal]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const overlay = btn.closest('.photo-modal-overlay');
+      closeModal(overlay);
+    });
+  });
+
+  // Click overlay backdrop to close
+  photoModalOverlays.forEach((overlay) => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay);
+    });
+  });
+
+  // Gallery items → open lightbox
+  document.querySelectorAll('.gallery-item').forEach((item) => {
+    item.addEventListener('click', () => {
+      const src = item.dataset.src || item.querySelector('img')?.src;
+      const alt = item.querySelector('img')?.alt || '';
+      if (src) openLightbox(src, alt);
+    });
+  });
+
+  // Lightbox close button
+  if (lightboxClose) {
+    lightboxClose.addEventListener('click', closeLightbox);
+  }
+
+  // Click lightbox backdrop to close
+  if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  }
+
+  // Keyboard: Escape closes modals / lightbox
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (lightbox && lightbox.classList.contains('active')) {
+      closeLightbox();
+      return;
+    }
+    const openOverlay = document.querySelector('.photo-modal-overlay.active');
+    if (openOverlay) closeModal(openOverlay);
   });
 
 })();
