@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Hafin Parokkot – Food Technologist &amp; R&amp;D Associate specializing in product innovation, formulation design, and food safety systems. Based in Sharjah, UAE." />
   <meta name="keywords" content="Food Technologist, R&D, Product Development, HACCP, Food Science, UAE, Hafin Parokkot, NPD, FSSC 22000, BRCGS, Sensory Evaluation" />
+  <meta name="author" content="Hafin Parokkot" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#040810" />
   <meta property="og:title" content="Hafin Parokkot | Food Technologist &amp; R&amp;D Specialist" />
   <meta property="og:description" content="Food Science postgraduate with hands-on R&amp;D experience in the nuts and FMCG sector. Specialising in NPD, HACCP, FSSC 22000, and product formulation." />
   <meta property="og:type" content="website" />
@@ -17,30 +20,44 @@
   <meta name="twitter:title" content="Hafin Parokkot | Food Technologist &amp; R&amp;D Specialist" />
   <meta name="twitter:description" content="Food Science postgraduate specialising in NPD, HACCP, FSSC 22000, and product formulation. Based in Sharjah, UAE." />
   <meta name="twitter:image" content="https://hafinparokkot.vercel.app/og_image.png" />
+  <link rel="canonical" href="https://hafinparokkot.vercel.app" />
+  <link rel="alternate" hreflang="en" href="https://hafinparokkot.vercel.app" />
+  <!-- Preload LCP hero background -->
+  <link rel="preload" as="image" href="hero_bg.png" />
   <!-- Structured Data: Person -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Hafin Parokkot",
-    "jobTitle": "Food Technologist &amp; R&amp;D Specialist",
+    "jobTitle": "Food Technologist & R&D Specialist",
     "url": "https://hafinparokkot.vercel.app",
+    "email": "hafinpks@gmail.com",
+    "telephone": "+971507356909",
     "sameAs": ["https://linkedin.com/in/hafinp"],
+    "knowsAbout": ["HACCP", "FSSC 22000", "BRCGS", "New Product Development", "Food Safety", "Sensory Evaluation", "Food Formulation"],
     "address": { "@type": "PostalAddress", "addressLocality": "Sharjah", "addressCountry": "AE" },
     "alumniOf": { "@type": "EducationalOrganization", "name": "Kerala University of Fisheries and Ocean Studies (KUFOS)" }
   }
   </script>
-  <title>Hafin Parokkot | Food Technologist & R&D Specialist</title>
+  <title>Hafin Parokkot | Food Technologist &amp; R&amp;D Specialist</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Anti-FOUC: apply saved theme before paint -->
+  <script>
+    (function(){var t=localStorage.getItem('hp-theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');}})();
+  </script>
   <link rel="stylesheet" href="style.css" />
   <!-- Plausible Analytics -->
   <script defer data-domain="hafinparokkot.vercel.app" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
+
+  <!-- Skip to main content (accessibility) -->
+  <a href="#home" class="skip-link">Skip to main content</a>
 
   <!-- Animated cursor -->
   <div class="cursor" id="cursor"></div>
@@ -63,6 +80,11 @@
         <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
       <a href="#contact" class="btn-hire">Hire Me</a>
+      <!-- Theme toggle -->
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
@@ -83,9 +105,9 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="hero" id="home">
+  <section class="hero" id="home" role="main">
     <div class="hero-bg">
-      <img src="hero_bg.png" alt="Hero Background" class="hero-bg-img" />
+      <img src="hero_bg.png" alt="" class="hero-bg-img" role="presentation" decoding="async" />
       <div class="hero-overlay"></div>
     </div>
     <div class="particles" id="particles"></div>
@@ -98,7 +120,9 @@
         <span class="name-line">Hafin</span>
         <span class="name-line accent">Parokkot</span>
       </h1>
-      <p class="hero-title reveal-up">Food Technologist <span class="title-sep">·</span> R&amp;D Specialist <span class="title-sep">·</span> Product Innovator</p>
+      <p class="hero-title reveal-up" aria-label="Food Technologist · R&D Specialist · Product Innovator">
+        <span class="typewriter" id="typewriter">Food Technologist</span><span class="typewriter-cursor" aria-hidden="true">|</span>
+      </p>
       <p class="hero-summary reveal-up">
         Food Science postgraduate driving innovation in the nuts &amp; FMCG sector —<br />
         from lab bench to commercial scale.
@@ -135,7 +159,7 @@
         </div>
       </div>
     </div>
-    <div class="scroll-indicator">
+    <div class="scroll-indicator" aria-hidden="true">
       <span>Scroll</span>
       <div class="scroll-line"></div>
     </div>
@@ -153,7 +177,7 @@
           <div class="avatar-wrapper">
             <div class="avatar-ring"></div>
             <div class="avatar-card">
-              <img src="hafin.jpg" alt="Hafin Parokkot – Food Technologist" class="avatar-photo" />
+              <img src="hafin.jpg" alt="Hafin Parokkot – Food Technologist" class="avatar-photo" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="about-info-cards">
@@ -674,10 +698,19 @@
         <span class="section-tag">Credentials</span>
         <h2 class="section-title">Certifications</h2>
       </div>
+      <!-- Filter Tabs -->
+      <div class="cert-filters" role="group" aria-label="Filter certifications by category">
+        <button class="cert-filter active" data-filter="all">All</button>
+        <button class="cert-filter" data-filter="highfield">Food Safety</button>
+        <button class="cert-filter" data-filter="iso">ISO</button>
+        <button class="cert-filter" data-filter="government">Government</button>
+        <button class="cert-filter" data-filter="online">Online</button>
+        <button class="cert-filter" data-filter="language">Language</button>
+      </div>
       <div class="certs-grid">
 
         <!-- Highfield Level 4 HACCP -->
-        <div class="cert-card" data-issuer="highfield">
+        <div class="cert-card" data-issuer="highfield" data-filter-group="highfield">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo highfield">
@@ -696,7 +729,7 @@
         </div>
 
         <!-- Highfield Level 3 HACCP -->
-        <div class="cert-card" data-issuer="highfield">
+        <div class="cert-card" data-issuer="highfield" data-filter-group="highfield">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo highfield">
@@ -715,7 +748,7 @@
         </div>
 
         <!-- ISO 22000:2018 Internal Auditor -->
-        <div class="cert-card" data-issuer="iso">
+        <div class="cert-card" data-issuer="iso" data-filter-group="iso">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo iso">
@@ -735,7 +768,7 @@
         </div>
 
         <!-- UK Food Standards Agency -->
-        <div class="cert-card" data-issuer="fsa">
+        <div class="cert-card" data-issuer="fsa" data-filter-group="government">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo fsa">
@@ -755,7 +788,7 @@
         </div>
 
         <!-- British Council -->
-        <div class="cert-card" data-issuer="bc">
+        <div class="cert-card" data-issuer="bc" data-filter-group="language">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo bc">
@@ -775,7 +808,7 @@
         </div>
 
         <!-- Alison -->
-        <div class="cert-card" data-issuer="alison">
+        <div class="cert-card" data-issuer="alison" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo alison">
@@ -794,7 +827,7 @@
         </div>
 
         <!-- POSHAN / ICMR — Basics of Nutrition -->
-        <div class="cert-card" data-issuer="icmr">
+        <div class="cert-card" data-issuer="icmr" data-filter-group="government">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo icmr">
@@ -814,7 +847,7 @@
         </div>
 
         <!-- POSHAN / ICMR — Food Fortification -->
-        <div class="cert-card" data-issuer="icmr">
+        <div class="cert-card" data-issuer="icmr" data-filter-group="government">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo icmr">
@@ -834,7 +867,7 @@
         </div>
 
         <!-- FTRIC Food Business School — Food Future -->
-        <div class="cert-card" data-issuer="ftric">
+        <div class="cert-card" data-issuer="ftric" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo ftric">
@@ -854,7 +887,7 @@
         </div>
 
         <!-- FTRIC Food Business School — Plant Based -->
-        <div class="cert-card" data-issuer="ftric">
+        <div class="cert-card" data-issuer="ftric" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo ftric">
@@ -874,7 +907,7 @@
         </div>
 
         <!-- Be10x / ISO 9001 AI -->
-        <div class="cert-card" data-issuer="be10x">
+        <div class="cert-card" data-issuer="be10x" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo be10x">
@@ -894,7 +927,7 @@
         </div>
 
         <!-- Coursera -->
-        <div class="cert-card" data-issuer="coursera">
+        <div class="cert-card" data-issuer="coursera" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo coursera">
@@ -914,7 +947,7 @@
         </div>
 
         <!-- NHCPS BLS -->
-        <div class="cert-card" data-issuer="nhcps">
+        <div class="cert-card" data-issuer="nhcps" data-filter-group="online">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo nhcps">
@@ -934,7 +967,7 @@
         </div>
 
         <!-- NCC -->
-        <div class="cert-card" data-issuer="ncc">
+        <div class="cert-card" data-issuer="ncc" data-filter-group="government">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo ncc">
@@ -954,7 +987,7 @@
         </div>
 
         <!-- VKIDFT / Kerala Food Safety -->
-        <div class="cert-card" data-issuer="vkidft">
+        <div class="cert-card" data-issuer="vkidft" data-filter-group="government">
           <div class="cert-shimmer"></div>
           <div class="cert-top">
             <div class="cert-issuer-logo vkidft">
@@ -1151,11 +1184,11 @@
           <form class="contact-form" id="contactForm">
             <div class="form-group">
               <label for="cf-name">Your Name</label>
-              <input type="text" id="cf-name" name="name" placeholder="John Smith" required />
+              <input type="text" id="cf-name" name="name" placeholder="John Smith" required autocomplete="name" />
             </div>
             <div class="form-group">
               <label for="cf-email">Your Email</label>
-              <input type="email" id="cf-email" name="email" placeholder="john@company.com" required />
+              <input type="email" id="cf-email" name="email" placeholder="john@company.com" required autocomplete="email" />
             </div>
             <div class="form-group">
               <label for="cf-subject">Subject</label>

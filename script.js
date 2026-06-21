@@ -415,4 +415,94 @@
     progressBar.style.width = progress + '%';
   }, { passive: true });
 
+  /* ---- Dark / Light Theme Toggle ---- */
+  const themeToggle = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('hp-theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('hp-theme', next);
+      // Update theme-color meta
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) {
+        themeMeta.setAttribute('content', next === 'light' ? '#f4f1ec' : '#040810');
+      }
+    });
+  }
+
+  /* ---- Typewriter Cycling Animation ---- */
+  const typewriterEl = document.getElementById('typewriter');
+  if (typewriterEl) {
+    const phrases = [
+      'Food Technologist',
+      'R&D Specialist',
+      'Product Innovator',
+    ];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingSpeed = 80;
+    const deletingSpeed = 45;
+    const pauseBetween = 1800;
+
+    function typeEffect() {
+      const current = phrases[phraseIndex];
+      if (!isDeleting) {
+        typewriterEl.textContent = current.slice(0, charIndex + 1);
+        charIndex++;
+        if (charIndex === current.length) {
+          isDeleting = true;
+          setTimeout(typeEffect, pauseBetween);
+          return;
+        }
+      } else {
+        typewriterEl.textContent = current.slice(0, charIndex - 1);
+        charIndex--;
+        if (charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+      }
+      setTimeout(typeEffect, isDeleting ? deletingSpeed : typingSpeed);
+    }
+
+    // Start after hero load animation
+    setTimeout(typeEffect, 1200);
+  }
+
+  /* ---- Certificate Filter Tabs ---- */
+  const certFilters = document.querySelectorAll('.cert-filter');
+  const certCards = document.querySelectorAll('.cert-card[data-filter-group]');
+
+  certFilters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      certFilters.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+
+      certCards.forEach((card) => {
+        if (filter === 'all' || card.dataset.filterGroup === filter) {
+          card.classList.remove('cert-hidden');
+          // Re-trigger entrance animation
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, 30);
+          });
+        } else {
+          card.classList.add('cert-hidden');
+        }
+      });
+    });
+  });
+
 })();
