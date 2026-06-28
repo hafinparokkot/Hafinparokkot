@@ -1562,6 +1562,7 @@ input, textarea { font-family: inherit; }
 
 .marquee-track {
   display: flex;
+  width: max-content;
   gap: 1.25rem;
   padding: 0 0.625rem;
   white-space: nowrap;
