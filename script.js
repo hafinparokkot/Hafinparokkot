@@ -144,6 +144,37 @@
 
   createParticles();
 
+  /* ---- Hero Orb Animation ---- */
+  const heroOrb = document.getElementById('heroOrb');
+  const heroSection = document.getElementById('home');
+  
+  if (heroOrb && heroSection && window.matchMedia('(hover: hover)').matches) {
+    let orbX = window.innerWidth / 2;
+    let orbY = window.innerHeight / 2;
+    let targetX = orbX;
+    let targetY = orbY;
+
+    heroSection.addEventListener('mousemove', (e) => {
+      targetX = e.pageX;
+      targetY = e.pageY;
+      heroOrb.classList.add('active');
+    });
+
+    heroSection.addEventListener('mouseleave', () => {
+      heroOrb.classList.remove('active');
+    });
+
+    function animateOrb() {
+      orbX += (targetX - orbX) * 0.05;
+      orbY += (targetY - orbY) * 0.05;
+      heroOrb.style.left = orbX + 'px';
+      heroOrb.style.top = orbY + 'px';
+      requestAnimationFrame(animateOrb);
+    }
+    animateOrb();
+  }
+
+
   /* ---- Counter Animation ---- */
   function animateCounter(el) {
     const target = parseInt(el.dataset.target, 10);
