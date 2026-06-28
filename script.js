@@ -571,10 +571,10 @@
   });
 
   // Gallery items → open lightbox
-  document.querySelectorAll('.gallery-item').forEach((item) => {
+  document.querySelectorAll('.gallery-item, .photo-lightbox-trigger').forEach((item) => {
     item.addEventListener('click', () => {
-      const src = item.dataset.src || item.querySelector('img')?.src;
-      const alt = item.querySelector('img')?.alt || '';
+      const src = item.dataset.src || item.querySelector('img')?.src || item.src;
+      const alt = item.querySelector('img')?.alt || item.alt || '';
       if (src) openLightbox(src, alt);
     });
   });
