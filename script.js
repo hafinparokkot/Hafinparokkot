@@ -633,4 +633,29 @@
     if (openOverlay) closeModal(openOverlay);
   });
 
+  /* ---- 3D Tilt Effect for Glass Cards ---- */
+  const tiltCards = document.querySelectorAll('.project-card, .cert-card, .edu-card, .info-card, .testimonial-card, .contact-card, .org-card');
+  tiltCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      if (window.innerWidth < 768) return; // Disable on mobile
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = ((y - centerY) / centerY) * -5;
+      const rotateY = ((x - centerX) / centerX) * 5;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+      card.style.transition = 'none';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.transition = 'transform var(--transition), box-shadow var(--transition), border-color var(--transition)';
+    });
+  });
+
 })();
