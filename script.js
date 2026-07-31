@@ -474,6 +474,7 @@
       'Food Technologist',
       'R&D Specialist',
       'Product Innovator',
+      'Sustainability Leader'
     ];
     let phraseIndex = 0;
     let charIndex = 0;
