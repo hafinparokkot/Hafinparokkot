@@ -490,7 +490,7 @@ input, textarea { font-family: inherit; }
 }
 
 .hero-name {
-  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-size: clamp(2.75rem, 8vw, 7rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -3px;
@@ -1995,7 +1995,7 @@ input, textarea { font-family: inherit; }
 }
 
 @media (max-width: 700px) {
-  .section { padding: 5rem 0; }
+  .section { padding: 3.5rem 0; }
   .hero-name { letter-spacing: -2px; }
   .projects-grid { grid-template-columns: 1fr; }
   .certs-grid { grid-template-columns: 1fr; }
