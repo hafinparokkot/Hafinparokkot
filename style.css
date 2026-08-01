@@ -1618,14 +1618,18 @@ input, textarea { font-family: inherit; }
   position: relative;
   left: 50%;
   transform: translateX(-50%);
+  /* Fade out edges for premium look */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  gap: 1.25rem;
-  padding: 0 0.625rem;
+  gap: 1.5rem;
+  padding: 1.5rem 0.75rem;
   white-space: nowrap;
+  align-items: center;
 }
 
 .track-left {
@@ -1640,40 +1644,66 @@ input, textarea { font-family: inherit; }
   animation-play-state: paused;
 }
 
+/* Dim all images slightly when hovering the track */
+.marquee-track:hover .gallery-marquee-img {
+  filter: grayscale(60%) blur(1.5px) brightness(0.6);
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
 .gallery-marquee-img {
-  height: 220px;
+  height: 240px;
   width: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, filter 0.3s ease;
-  filter: grayscale(15%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  filter: grayscale(10%) brightness(0.9);
   cursor: pointer;
   flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
 }
 
-.gallery-marquee-img:hover {
-  transform: scale(1.02);
-  filter: grayscale(0%);
+/* Brighten and elevate only the hovered image */
+.marquee-track .gallery-marquee-img:hover {
+  filter: grayscale(0%) blur(0) brightness(1.1);
+  transform: scale(1.08) translateY(-6px);
+  opacity: 1;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--glow-primary);
+  border-color: var(--accent-primary);
+  z-index: 10;
+  position: relative;
 }
 
 @keyframes marquee-left {
   0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-50% - 0.625rem)); }
+  100% { transform: translateX(calc(-50% - 0.75rem)); }
 }
 
 @keyframes marquee-right {
-  0% { transform: translateX(calc(-50% - 0.625rem)); }
+  0% { transform: translateX(calc(-50% - 0.75rem)); }
   100% { transform: translateX(0); }
 }
 
 @media (max-width: 768px) {
+  .marquee-track {
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
   .gallery-marquee-img {
-    height: 150px;
+    height: 160px;
   }
   .track-left, .track-right {
     animation-duration: 35s;
+  }
+  @keyframes marquee-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-50% - 0.5rem)); }
+  }
+  @keyframes marquee-right {
+    0% { transform: translateX(calc(-50% - 0.5rem)); }
+    100% { transform: translateX(0); }
   }
 }
 
@@ -2594,6 +2624,15 @@ input, textarea { font-family: inherit; }
   cursor: zoom-in;
   group: photo;
   aspect-ratio: 4/3;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease;
+  border: 1px solid var(--border-subtle);
+}
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--glow-primary);
+  border-color: var(--accent-primary);
+  z-index: 5;
 }
 .photo-gallery.count-1 .gallery-item {
   aspect-ratio: 16/9;
@@ -2604,9 +2643,9 @@ input, textarea { font-family: inherit; }
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.45s ease;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.gallery-item:hover img { transform: scale(1.04); }
+.gallery-item:hover img { transform: scale(1.08); }
 .gallery-item-overlay {
   position: absolute;
   inset: 0;
@@ -2614,10 +2653,11 @@ input, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease;
+  transition: background 0.4s ease;
+  pointer-events: none;
 }
 .gallery-item:hover .gallery-item-overlay {
-  background: rgba(0, 212, 170, 0.12);
+  background: var(--glow-primary);
 }
 .gallery-item-overlay svg {
   opacity: 0;
