@@ -71,6 +71,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -79,6 +81,7 @@ body {
   color: var(--text-primary);
   line-height: 1.7;
   overflow-x: hidden;
+  max-width: 100%;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -2072,7 +2075,8 @@ input, textarea { font-family: inherit; }
 
 @media (max-width: 480px) {
   .container { padding: 0 1.25rem; }
-  .navbar { padding: 0 1.25rem; }
+  .navbar { padding: 0 1rem; }
+  .nav-container { gap: 1rem; }
   .hero-content { padding: 0 1.25rem; padding-top: 90px; }
   .hero-ctas { flex-direction: column; align-items: center; }
   .btn-primary, .btn-outline, .btn-cv, .btn-linkedin { width: 100%; justify-content: center; }
