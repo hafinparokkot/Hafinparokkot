@@ -168,7 +168,13 @@
 
   <!-- About Section -->
   <section class="section about-section" id="about">
-    <div class="container">
+    <div class="about-bg-wrapper">
+      <video autoplay loop muted playsinline class="about-bg-video">
+        <source src="intro.mp4" type="video/mp4">
+      </video>
+      <div class="about-overlay"></div>
+    </div>
+    <div class="container relative-content">
       <div class="section-header">
         <span class="section-tag">Who I Am</span>
         <h2 class="section-title">About Me</h2>
@@ -178,10 +184,7 @@
           <div class="avatar-wrapper">
             <div class="avatar-ring"></div>
             <div class="avatar-card">
-              <video class="avatar-photo" autoplay loop muted playsinline>
-                <source src="intro.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
+              <img src="hafin.jpg" alt="Hafin Parokkot – Food Technologist" class="avatar-photo" loading="lazy" decoding="async" />
             </div>
           </div>
           <div class="about-info-cards">
