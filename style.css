@@ -83,6 +83,8 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 img { 
