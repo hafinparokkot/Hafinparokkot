@@ -668,3 +668,15 @@ document.addEventListener('contextmenu', function(e) {
   }
 });
 
+/* ---- Hero Background Slider ---- */
+const heroSlides = document.querySelectorAll('.hero-slide');
+let currentSlideIndex = 0;
+
+if (heroSlides.length > 0) {
+  setInterval(() => {
+    heroSlides[currentSlideIndex].classList.remove('active');
+    currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
+    heroSlides[currentSlideIndex].classList.add('active');
+  }, 5000);
+}
+
