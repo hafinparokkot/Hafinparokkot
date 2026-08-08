@@ -365,13 +365,28 @@
     });
   }
 
-  /* ---- Smooth hero reveal on load ---- */
+  /* ---- Preloader & Smooth hero reveal on load ---- */
   window.addEventListener('load', () => {
-    document.querySelectorAll('.hero .reveal-up').forEach((el, i) => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
       setTimeout(() => {
-        el.classList.add('visible');
-      }, 200 + i * 150);
-    });
+        preloader.classList.add('fade-out');
+        setTimeout(() => {
+          preloader.style.display = 'none';
+          document.querySelectorAll('.hero .reveal-up').forEach((el, i) => {
+            setTimeout(() => {
+              el.classList.add('visible');
+            }, 100 + i * 150);
+          });
+        }, 500); // Wait for fade-out CSS transition
+      }, 800); // Minimal display time for preloader
+    } else {
+      document.querySelectorAll('.hero .reveal-up').forEach((el, i) => {
+        setTimeout(() => {
+          el.classList.add('visible');
+        }, 200 + i * 150);
+      });
+    }
   });
 
   /* ---- Navbar highlight on click ---- */
@@ -634,7 +649,7 @@
     if (openOverlay) closeModal(openOverlay);
   });
 
-  /* ---- 3D Tilt Effect for Glass Cards ---- */
+  /* ---- 3D Tilt Effect & Spotlight for Glass Cards ---- */
   const tiltCards = document.querySelectorAll('.project-card, .cert-card, .edu-card, .info-card, .testimonial-card, .contact-card, .org-card');
   tiltCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
@@ -651,6 +666,10 @@
       
       card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
       card.style.transition = 'none';
+      
+      // Update spotlight coordinates
+      card.style.setProperty('--x', `${x}px`);
+      card.style.setProperty('--y', `${y}px`);
     });
     
     card.addEventListener('mouseleave', () => {
