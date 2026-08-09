@@ -1192,6 +1192,15 @@ input, textarea { font-family: inherit; }
 
 .company-icon { font-size: 1rem; }
 
+.company-logo {
+  height: 24px;
+  max-width: 80px;
+  object-fit: contain;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .exp-bullets {
   display: flex;
   flex-direction: column;
@@ -1257,6 +1266,13 @@ input, textarea { font-family: inherit; }
 .edu-card:hover::before { opacity: 1; }
 
 .edu-icon { font-size: 2.5rem; }
+
+.edu-logo {
+  height: 52px;
+  max-width: 150px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
 
 .edu-badge {
   display: inline-block;
