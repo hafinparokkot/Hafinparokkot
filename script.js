@@ -366,9 +366,34 @@
   }
 
   /* ---- Preloader & Smooth hero reveal on load ---- */
-  window.addEventListener('load', () => {
-    const preloader = document.getElementById('preloader');
-    if (preloader) {
+  const preloader = document.getElementById('preloader');
+  const preloaderProgress = document.querySelector('.preloader-circle-progress');
+  const preloaderPercentage = document.querySelector('.preloader-percentage');
+
+  if (preloader && preloaderProgress && preloaderPercentage) {
+    let progress = 0;
+    const circumference = 283;
+
+    // Fake progress animation
+    const progressInterval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 100) progress = 100;
+
+      const offset = circumference - (progress / 100) * circumference;
+      preloaderProgress.style.strokeDashoffset = offset;
+      preloaderPercentage.textContent = Math.round(progress) + '%';
+
+      if (progress === 100) {
+        clearInterval(progressInterval);
+      }
+    }, 100);
+
+    window.addEventListener('load', () => {
+      // Ensure it completes to 100% on load
+      clearInterval(progressInterval);
+      preloaderProgress.style.strokeDashoffset = 0;
+      preloaderPercentage.textContent = '100%';
+
       setTimeout(() => {
         preloader.classList.add('fade-out');
         setTimeout(() => {
@@ -379,15 +404,17 @@
             }, 100 + i * 150);
           });
         }, 500); // Wait for fade-out CSS transition
-      }, 800); // Minimal display time for preloader
-    } else {
+      }, 400); // Small delay after hitting 100%
+    });
+  } else {
+    window.addEventListener('load', () => {
       document.querySelectorAll('.hero .reveal-up').forEach((el, i) => {
         setTimeout(() => {
           el.classList.add('visible');
         }, 200 + i * 150);
       });
-    }
-  });
+    });
+  }
 
   /* ---- Navbar highlight on click ---- */
   navLinks.forEach((link) => {

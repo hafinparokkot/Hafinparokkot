@@ -55,10 +55,13 @@
   <script defer data-domain="hafinparokkot.vercel.app" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
-  <!-- Preloader -->
   <div id="preloader" class="preloader">
-    <div class="preloader-logo">
-      <span class="preloader-dot"></span>
+    <div class="preloader-circle-container">
+      <svg class="preloader-svg" viewBox="0 0 100 100">
+        <circle class="preloader-circle-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="preloader-circle-progress" cx="50" cy="50" r="45"></circle>
+      </svg>
+      <div class="preloader-percentage">0%</div>
     </div>
   </div>
 
