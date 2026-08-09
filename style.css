@@ -647,8 +647,13 @@ input, textarea { font-family: inherit; }
   justify-content: center;
   gap: 2rem;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
 }
 
 .hero-logo {
