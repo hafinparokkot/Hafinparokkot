@@ -1429,6 +1429,7 @@ input, textarea { font-family: inherit; }
 
 .project-card.featured {
   border-color: rgba(0, 212, 170, 0.2);
+  grid-column: 1 / -1;
 }
 
 .project-glow {
