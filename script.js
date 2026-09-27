@@ -726,3 +726,34 @@ if (heroSlides.length > 0) {
   }, 5000);
 }
 
+/* ---- Gallery Bento Filter ---- */
+const galleryFilters = document.querySelectorAll('.gallery-filter-btn');
+const galleryCards = document.querySelectorAll('.gallery-card[data-category]');
+
+if (galleryFilters.length > 0) {
+  galleryFilters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      galleryFilters.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.galleryFilter;
+
+      galleryCards.forEach((card) => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = 'block';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.95)';
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'scale(1)';
+            }, 30);
+          });
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+
