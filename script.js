@@ -513,10 +513,10 @@
   const typewriterEl = document.getElementById('typewriter');
   if (typewriterEl) {
     const phrases = [
-      'Food Technologist',
-      'R&D Specialist',
-      'Product Innovator',
-      'Sustainability Leader'
+      'Snack Product Developer',
+      'Snacks Manufacturing Specialist',
+      'R&D & Product Innovator',
+      'Food Technologist'
     ];
     let phraseIndex = 0;
     let charIndex = 0;
