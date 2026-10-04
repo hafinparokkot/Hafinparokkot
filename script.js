@@ -315,8 +315,16 @@
   const errorMsg   = document.getElementById('formError');
 
   if (form) {
+    let lastSubmitTime = 0;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      // Prevent rapid re-submissions (30s cooldown)
+      const now = Date.now();
+      if (now - lastSubmitTime < 30000) {
+        alert('Please wait a few moments before sending another message.');
+        return;
+      }
 
       // Honeypot check – abort silently if a bot filled the hidden field
       if (document.getElementById('_honey').value) return;
@@ -346,6 +354,7 @@
         .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
         .then(() => {
           // ✅ Success
+          lastSubmitTime = Date.now();
           successMsg.style.display = 'block';
           form.reset();
           setTimeout(() => { successMsg.style.display = 'none'; }, 6000);
@@ -707,9 +716,30 @@
 
 })();
 
-/* ---- Prevent Image Download (Right Click) ---- */
+/* ---- Enhanced Image Protection (Right-Click, Drag & Save-as Shortcuts) ---- */
 document.addEventListener('contextmenu', function(e) {
-  if (e.target.tagName === 'IMG') {
+  if (
+    e.target.tagName === 'IMG' ||
+    e.target.tagName === 'VIDEO' ||
+    e.target.closest('img, video, .gallery-item, .gallery-card, .photo-modal, .photo-lightbox, .hero-slide, .avatar-wrapper, .cert-card, .project-card')
+  ) {
+    e.preventDefault();
+  }
+});
+
+// Prevent dragging images to desktop or new tab
+document.addEventListener('dragstart', function(e) {
+  if (
+    e.target.tagName === 'IMG' ||
+    e.target.closest('img, video, .gallery-item, .gallery-card, .hero-slide, .photo-lightbox')
+  ) {
+    e.preventDefault();
+  }
+});
+
+// Intercept Ctrl+S / Cmd+S save shortcuts to prevent dumping page assets
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
     e.preventDefault();
   }
 });
