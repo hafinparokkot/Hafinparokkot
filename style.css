@@ -762,6 +762,7 @@ input, textarea { font-family: inherit; }
 .section {
   padding: 7rem 0;
   position: relative;
+  scroll-margin-top: 85px;
 }
 
 .container {

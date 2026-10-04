@@ -980,6 +980,26 @@ function updateQuickDock() {
   });
 }
 
+// Quick dock click handling
+dockButtons.forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+    const targetId = btn.getAttribute('href');
+    if (targetId && targetId.startsWith('#')) {
+      const targetEl = document.querySelector(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        // If clicking on Products (#spectrum), ensure the Products tab is active
+        if (targetId === '#spectrum') {
+          const productsTab = document.querySelector('.spec-tab-btn[data-spec-tab="products"]');
+          if (productsTab) productsTab.click();
+        }
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', targetId);
+      }
+    }
+  });
+});
+
 window.addEventListener('scroll', updateQuickDock, { passive: true });
 updateQuickDock();
 
