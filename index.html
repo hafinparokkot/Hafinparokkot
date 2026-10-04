@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Owner Mode: Secretly exclude owner visits from tracking via ?admin=1 -->
+  <script>
+    (function() {
+      try {
+        var p = new URLSearchParams(window.location.search);
+        if (p.get('admin') === '1' || p.get('owner') === 'true') {
+          localStorage.setItem('hp_owner_mode', 'true');
+          alert('🛡️ Owner mode ACTIVATED! Your visits will NOT be counted in Google Analytics or Vercel on this device.');
+        } else if (p.get('admin') === '0' || p.get('owner') === 'false') {
+          localStorage.removeItem('hp_owner_mode');
+          alert('Owner mode DEACTIVATED. Analytics tracking re-enabled on this device.');
+        }
+        if (localStorage.getItem('hp_owner_mode') === 'true') {
+          window['ga-disable-G-S1Q2PVY826'] = true;
+          window.va = function() {};
+          window.si = function() {};
+          console.info('🛡️ Owner mode active: All analytics tracking disabled.');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1Q2PVY826"></script>
   <script>
@@ -60,20 +81,16 @@
     (function(){var t=localStorage.getItem('hp-theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');}})();
   </script>
   <link rel="stylesheet" href="style.css" />
-  <!-- Vercel Web Analytics -->
+  <!-- Analytics Scripts (Filtered in Owner Mode) -->
   <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    if (localStorage.getItem('hp_owner_mode') !== 'true') {
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+      window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+      var vs = document.createElement('script'); vs.defer = true; vs.src = '/_vercel/insights/script.js'; document.head.appendChild(vs);
+      var ss = document.createElement('script'); ss.defer = true; ss.src = '/_vercel/speed-insights/script.js'; document.head.appendChild(ss);
+      var ps = document.createElement('script'); ps.defer = true; ps.setAttribute('data-domain', 'hafinparokkot.com'); ps.src = 'https://plausible.io/js/script.js'; document.head.appendChild(ps);
+    }
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
-
-  <!-- Vercel Speed Insights -->
-  <script>
-    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-
-  <!-- Plausible Analytics -->
-  <script defer data-domain="hafinparokkot.com" src="https://plausible.io/js/script.js"></script>
 </head>
 <body>
   <div id="preloader" class="preloader">
