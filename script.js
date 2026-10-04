@@ -756,34 +756,231 @@ if (heroSlides.length > 0) {
   }, 5000);
 }
 
-/* ---- Gallery Bento Filter ---- */
+/* ========================================================
+   PAGE LENGTH & UX OPTIMIZATIONS (Tabs, Timeline, Gallery, Dock)
+   ======================================================== */
+
+/* ---- 1. Specialization Tabs (Spectrum & Lifecycle) ---- */
+const specTabBtns = document.querySelectorAll('.spec-tab-btn');
+const specTabPanels = document.querySelectorAll('.spec-tab-panel');
+
+if (specTabBtns.length > 0) {
+  specTabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tabTarget = btn.dataset.specTab;
+      
+      specTabBtns.forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+
+      specTabPanels.forEach((panel) => {
+        panel.classList.remove('active');
+      });
+
+      if (tabTarget === 'products') {
+        const p = document.getElementById('specTabProducts');
+        if (p) p.classList.add('active');
+      } else if (tabTarget === 'pipeline') {
+        const p = document.getElementById('specTabPipeline');
+        if (p) p.classList.add('active');
+      }
+    });
+  });
+
+  // Handle URL hash on load or hash change
+  function checkSpecHash() {
+    if (window.location.hash === '#lifecycle') {
+      const pipelineBtn = document.querySelector('.spec-tab-btn[data-spec-tab="pipeline"]');
+      if (pipelineBtn) pipelineBtn.click();
+    } else if (window.location.hash === '#spectrum') {
+      const productsBtn = document.querySelector('.spec-tab-btn[data-spec-tab="products"]');
+      if (productsBtn) productsBtn.click();
+    }
+  }
+  window.addEventListener('hashchange', checkSpecHash);
+  checkSpecHash();
+}
+
+/* ---- 2. Collapsible Timeline (Earlier Internships) ---- */
+const btnToggleTimeline = document.getElementById('btnToggleTimeline');
+const timelineEarlier = document.getElementById('timelineEarlier');
+const timelineToggleWrap = document.querySelector('.timeline-toggle-wrapper');
+
+if (btnToggleTimeline && timelineEarlier) {
+  btnToggleTimeline.addEventListener('click', () => {
+    const isExpanded = btnToggleTimeline.getAttribute('aria-expanded') === 'true';
+
+    if (!isExpanded) {
+      timelineEarlier.style.display = 'flex';
+      timelineEarlier.querySelectorAll('.timeline-item').forEach((item) => {
+        item.classList.add('visible');
+      });
+      btnToggleTimeline.setAttribute('aria-expanded', 'true');
+      if (timelineToggleWrap) timelineToggleWrap.classList.add('expanded');
+      const titleEl = btnToggleTimeline.querySelector('.timeline-toggle-title');
+      if (titleEl) titleEl.textContent = 'Show Fewer Earlier Roles';
+    } else {
+      timelineEarlier.style.display = 'none';
+      btnToggleTimeline.setAttribute('aria-expanded', 'false');
+      if (timelineToggleWrap) timelineToggleWrap.classList.remove('expanded');
+      const titleEl = btnToggleTimeline.querySelector('.timeline-toggle-title');
+      if (titleEl) titleEl.textContent = 'View Earlier Industrial Internships (3)';
+
+      // Smooth scroll back up to timeline if user is far down
+      const rect = btnToggleTimeline.getBoundingClientRect();
+      if (rect.top < 100) {
+        btnToggleTimeline.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+}
+
+/* ---- 3. Gallery Bento Filter & Pagination ---- */
 const galleryFilters = document.querySelectorAll('.gallery-filter-btn');
 const galleryCards = document.querySelectorAll('.gallery-card[data-category]');
+const galleryGrid = document.getElementById('galleryGrid');
+const btnToggleGallery = document.getElementById('btnToggleGallery');
+const galleryToggleWrap = document.getElementById('galleryToggleWrap');
+
+let isGalleryExpanded = false;
+
+function updateGalleryDisplay(activeFilter) {
+  if (activeFilter === 'all') {
+    if (galleryToggleWrap) galleryToggleWrap.style.display = 'flex';
+
+    galleryCards.forEach((card) => {
+      const isExtra = card.classList.contains('gallery-item-extra');
+      if (!isGalleryExpanded && isExtra) {
+        card.style.display = 'none';
+      } else {
+        card.style.display = 'block';
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      }
+    });
+
+    if (galleryGrid) {
+      if (isGalleryExpanded) {
+        galleryGrid.classList.add('expanded');
+      } else {
+        galleryGrid.classList.remove('expanded');
+      }
+    }
+
+    if (btnToggleGallery) {
+      const labelEl = btnToggleGallery.querySelector('.gallery-toggle-label');
+      if (labelEl) {
+        labelEl.textContent = isGalleryExpanded
+          ? 'Show Fewer Highlights'
+          : 'Show All 21 Photos & Moments';
+      }
+      if (isGalleryExpanded) {
+        btnToggleGallery.classList.add('expanded');
+        btnToggleGallery.setAttribute('aria-expanded', 'true');
+      } else {
+        btnToggleGallery.classList.remove('expanded');
+        btnToggleGallery.setAttribute('aria-expanded', 'false');
+      }
+    }
+  } else {
+    // Category filter active: show all items matching category
+    if (galleryToggleWrap) galleryToggleWrap.style.display = 'none';
+
+    galleryCards.forEach((card) => {
+      if (card.dataset.category === activeFilter) {
+        card.style.display = 'block';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          }, 30);
+        });
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+}
 
 if (galleryFilters.length > 0) {
   galleryFilters.forEach((btn) => {
     btn.addEventListener('click', () => {
       galleryFilters.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      const filter = btn.dataset.galleryFilter;
-
-      galleryCards.forEach((card) => {
-        if (filter === 'all' || card.dataset.category === filter) {
-          card.style.display = 'block';
-          card.style.opacity = '0';
-          card.style.transform = 'scale(0.95)';
-          requestAnimationFrame(() => {
-            setTimeout(() => {
-              card.style.opacity = '1';
-              card.style.transform = 'scale(1)';
-            }, 30);
-          });
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      const filter = btn.dataset.galleryFilter || 'all';
+      updateGalleryDisplay(filter);
     });
   });
 }
+
+if (btnToggleGallery) {
+  btnToggleGallery.addEventListener('click', () => {
+    isGalleryExpanded = !isGalleryExpanded;
+    updateGalleryDisplay('all');
+
+    if (!isGalleryExpanded) {
+      const secHeader = document.querySelector('.gallery-section .section-header');
+      if (secHeader) {
+        secHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+}
+
+// Initial gallery setup (show top 8, hide extra)
+updateGalleryDisplay('all');
+
+/* ---- 4. Floating Quick-Dock Bar ---- */
+const quickDock = document.getElementById('quickDock');
+const dockButtons = document.querySelectorAll('.quick-dock-btn');
+const dockSections = [
+  { id: 'about', el: document.getElementById('about') },
+  { id: 'spectrum', el: document.getElementById('spectrum') },
+  { id: 'experience', el: document.getElementById('experience') },
+  { id: 'skills', el: document.getElementById('skills') },
+  { id: 'gallery', el: document.getElementById('gallery') },
+  { id: 'contact', el: document.getElementById('contact') }
+];
+
+function updateQuickDock() {
+  if (!quickDock) return;
+
+  // Show dock after scrolling past hero (400px)
+  if (window.scrollY > 400) {
+    quickDock.classList.add('visible');
+  } else {
+    quickDock.classList.remove('visible');
+  }
+
+  // Active section indicator
+  let currentSecId = '';
+  const scrollPos = window.scrollY + window.innerHeight * 0.4;
+
+  dockSections.forEach(({ id, el }) => {
+    if (el) {
+      const top = el.offsetTop;
+      const height = el.offsetHeight;
+      if (scrollPos >= top && scrollPos < top + height) {
+        currentSecId = id;
+      }
+    }
+  });
+
+  dockButtons.forEach((btn) => {
+    if (btn.dataset.dock === currentSecId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateQuickDock, { passive: true });
+updateQuickDock();
 
 
