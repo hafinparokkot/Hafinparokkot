@@ -3,6 +3,8 @@
    All interactions, animations & dynamic behavior
    ==================================================== */
 
+const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
 (function () {
   'use strict';
 
@@ -107,7 +109,7 @@
 
   /* ---- Back to top ---- */
   document.getElementById('backToTop').addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   });
 
   /* ---- Particles ---- */
@@ -142,13 +144,13 @@
     }
   }
 
-  createParticles();
+  if (!prefersReducedMotion) createParticles();
 
   /* ---- Hero Orb Animation ---- */
   const heroOrb = document.getElementById('heroOrb');
   const heroSection = document.getElementById('home');
   
-  if (heroOrb && heroSection && window.matchMedia('(hover: hover)').matches) {
+  if (heroOrb && heroSection && window.matchMedia('(hover: hover)').matches && !prefersReducedMotion) {
     let orbX = window.innerWidth / 2;
     let orbY = window.innerHeight / 2;
     let targetX = orbX;
@@ -177,15 +179,22 @@
 
   /* ---- Counter Animation ---- */
   function animateCounter(el) {
-    const target = parseInt(el.dataset.target, 10);
+    const target = Number.parseInt(el.dataset.target, 10);
+    if (!Number.isFinite(target)) return;
+    if (prefersReducedMotion) {
+      el.textContent = String(target);
+      return;
+    }
+
     const duration = 1800;
     const start = performance.now();
+    el.textContent = '0';
 
     function update(now) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(eased * target);
+      el.textContent = String(Math.round(eased * target));
       if (progress < 1) requestAnimationFrame(update);
     }
 
@@ -384,7 +393,7 @@
     const circumference = 283;
 
     // Fake progress animation
-    const progressInterval = setInterval(() => {
+    const progressInterval = prefersReducedMotion ? null : setInterval(() => {
       progress += Math.random() * 15;
       if (progress > 100) progress = 100;
 
@@ -399,7 +408,12 @@
 
     window.addEventListener('load', () => {
       // Ensure it completes to 100% on load
-      clearInterval(progressInterval);
+      if (progressInterval !== null) clearInterval(progressInterval);
+      if (prefersReducedMotion) {
+        preloader.style.display = 'none';
+        document.querySelectorAll('.hero .reveal-up').forEach((el) => el.classList.add('visible'));
+        return;
+      }
       preloaderProgress.style.strokeDashoffset = 0;
       preloaderPercentage.textContent = '100%';
 
@@ -435,6 +449,7 @@
 
   /* ---- Magnetic effect on primary buttons ---- */
   document.querySelectorAll('.btn-primary, .btn-hire').forEach((btn) => {
+    if (prefersReducedMotion) return;
     btn.addEventListener('mousemove', (e) => {
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
@@ -448,6 +463,7 @@
 
   /* ---- Tilt effect on edu cards & project cards ---- */
   function addTilt(selector) {
+    if (prefersReducedMotion) return;
     document.querySelectorAll(selector).forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -470,6 +486,7 @@
 
   /* ---- Glowing background orbs (subtle parallax) ---- */
   document.addEventListener('mousemove', (e) => {
+    if (prefersReducedMotion) return;
     const x = (e.clientX / window.innerWidth - 0.5) * 20;
     const y = (e.clientY / window.innerHeight - 0.5) * 20;
     const overlay = document.querySelector('.hero-overlay');
@@ -520,7 +537,7 @@
 
   /* ---- Typewriter Cycling Animation ---- */
   const typewriterEl = document.getElementById('typewriter');
-  if (typewriterEl) {
+  if (typewriterEl && !prefersReducedMotion) {
     const phrases = [
       'Snack Product Developer',
       'Snacks Manufacturing Specialist',
@@ -689,7 +706,7 @@
   const tiltCards = document.querySelectorAll('.project-card, .cert-card, .edu-card, .info-card, .testimonial-card, .contact-card, .org-card');
   tiltCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
-      if (window.innerWidth < 768) return; // Disable on mobile
+      if (window.innerWidth < 768 || prefersReducedMotion) return; // Disable on mobile and for reduced motion
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -748,7 +765,7 @@ document.addEventListener('keydown', function(e) {
 const heroSlides = document.querySelectorAll('.hero-slide');
 let currentSlideIndex = 0;
 
-if (heroSlides.length > 0) {
+if (heroSlides.length > 0 && !prefersReducedMotion) {
   setInterval(() => {
     heroSlides[currentSlideIndex].classList.remove('active');
     currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
@@ -832,7 +849,7 @@ if (btnToggleTimeline && timelineEarlier) {
       // Smooth scroll back up to timeline if user is far down
       const rect = btnToggleTimeline.getBoundingClientRect();
       if (rect.top < 100) {
-        btnToggleTimeline.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        btnToggleTimeline.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
       }
     }
   });
@@ -926,7 +943,7 @@ if (btnToggleGallery) {
     if (!isGalleryExpanded) {
       const secHeader = document.querySelector('.gallery-section .section-header');
       if (secHeader) {
-        secHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        secHeader.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
       }
     }
   });
@@ -993,7 +1010,7 @@ dockButtons.forEach((btn) => {
           const productsTab = document.querySelector('.spec-tab-btn[data-spec-tab="products"]');
           if (productsTab) productsTab.click();
         }
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        targetEl.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
         history.pushState(null, '', targetId);
       }
     }
