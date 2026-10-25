@@ -535,16 +535,15 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
 
   /* ---- Dark / Light Theme Toggle ---- */
   const themeToggle = document.getElementById('themeToggle');
-  const savedTheme = localStorage.getItem('hp-theme') || 'dark';
-  if (savedTheme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
+  const themeStorageKey = 'hp-theme-v2';
+  const savedTheme = localStorage.getItem(themeStorageKey) === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
   if (themeToggle) {
     themeToggle.setAttribute('aria-pressed', String(savedTheme === 'light'));
   }
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {
-    themeMeta.setAttribute('content', savedTheme === 'light' ? '#f7f4ed' : '#0b1210');
+    themeMeta.setAttribute('content', savedTheme === 'light' ? '#fff8ee' : '#142235');
   }
 
   if (themeToggle) {
@@ -552,11 +551,11 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
       const current = document.documentElement.getAttribute('data-theme');
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('hp-theme', next);
+      localStorage.setItem(themeStorageKey, next);
       themeToggle.setAttribute('aria-pressed', String(next === 'light'));
       // Update theme-color meta
       if (themeMeta) {
-        themeMeta.setAttribute('content', next === 'light' ? '#f7f4ed' : '#0b1210');
+        themeMeta.setAttribute('content', next === 'light' ? '#fff8ee' : '#142235');
       }
     });
   }
