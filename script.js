@@ -3,6 +3,8 @@
    All interactions, animations & dynamic behavior
    ==================================================== */
 
+const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
 (function () {
   'use strict';
 
@@ -91,23 +93,39 @@
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileLinks = document.querySelectorAll('.mobile-link');
 
+  if (hamburger && mobileMenu) {
+    hamburger.setAttribute('aria-controls', 'mobileMenu');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+  }
+
+  function setMobileMenuOpen(isOpen) {
+    if (!hamburger || !mobileMenu) return;
+    hamburger.classList.toggle('open', isOpen);
+    mobileMenu.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileMenu.classList.toggle('open');
-    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    setMobileMenuOpen(!mobileMenu.classList.contains('open'));
   });
 
   mobileLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('open');
-      mobileMenu.classList.remove('open');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', () => setMobileMenuOpen(false));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+      setMobileMenuOpen(false);
+      hamburger.focus();
+    }
   });
 
   /* ---- Back to top ---- */
   document.getElementById('backToTop').addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
   });
 
   /* ---- Particles ---- */
@@ -115,18 +133,21 @@
     const container = document.getElementById('particles');
     if (!container) return;
 
-    const colors = ['#00d4aa', '#f0a500', '#3b82f6', '#8b5cf6'];
-    const count = 35;
+    const palette = getComputedStyle(document.documentElement);
+    const colors = ['--accent-primary', '--accent-secondary', '--accent-blue']
+      .map((token) => palette.getPropertyValue(token).trim())
+      .filter(Boolean);
+    const count = window.matchMedia('(max-width: 700px)').matches ? 8 : 18;
 
     for (let i = 0; i < count; i++) {
       const p = document.createElement('div');
       p.classList.add('particle');
 
-      const size = Math.random() * 4 + 1.5;
+      const size = Math.random() * 2.5 + 1.2;
       const color = colors[Math.floor(Math.random() * colors.length)];
       const left = Math.random() * 100;
       const delay = Math.random() * 15;
-      const duration = Math.random() * 12 + 8;
+      const duration = Math.random() * 14 + 12;
 
       p.style.cssText = `
         width: ${size}px;
@@ -142,13 +163,13 @@
     }
   }
 
-  createParticles();
+  if (!prefersReducedMotion) createParticles();
 
   /* ---- Hero Orb Animation ---- */
   const heroOrb = document.getElementById('heroOrb');
   const heroSection = document.getElementById('home');
   
-  if (heroOrb && heroSection && window.matchMedia('(hover: hover)').matches) {
+  if (heroOrb && heroSection && window.matchMedia('(hover: hover)').matches && !prefersReducedMotion) {
     let orbX = window.innerWidth / 2;
     let orbY = window.innerHeight / 2;
     let targetX = orbX;
@@ -177,15 +198,22 @@
 
   /* ---- Counter Animation ---- */
   function animateCounter(el) {
-    const target = parseInt(el.dataset.target, 10);
+    const target = Number.parseInt(el.dataset.target, 10);
+    if (!Number.isFinite(target)) return;
+    if (prefersReducedMotion) {
+      el.textContent = String(target);
+      return;
+    }
+
     const duration = 1800;
     const start = performance.now();
+    el.textContent = '0';
 
     function update(now) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(eased * target);
+      el.textContent = String(Math.round(eased * target));
       if (progress < 1) requestAnimationFrame(update);
     }
 
@@ -384,7 +412,7 @@
     const circumference = 283;
 
     // Fake progress animation
-    const progressInterval = setInterval(() => {
+    const progressInterval = prefersReducedMotion ? null : setInterval(() => {
       progress += Math.random() * 15;
       if (progress > 100) progress = 100;
 
@@ -399,7 +427,12 @@
 
     window.addEventListener('load', () => {
       // Ensure it completes to 100% on load
-      clearInterval(progressInterval);
+      if (progressInterval !== null) clearInterval(progressInterval);
+      if (prefersReducedMotion) {
+        preloader.style.display = 'none';
+        document.querySelectorAll('.hero .reveal-up').forEach((el) => el.classList.add('visible'));
+        return;
+      }
       preloaderProgress.style.strokeDashoffset = 0;
       preloaderPercentage.textContent = '100%';
 
@@ -435,11 +468,12 @@
 
   /* ---- Magnetic effect on primary buttons ---- */
   document.querySelectorAll('.btn-primary, .btn-hire').forEach((btn) => {
+    if (prefersReducedMotion) return;
     btn.addEventListener('mousemove', (e) => {
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) translateY(-3px)`;
+      btn.style.transform = `translate(${x * 0.07}px, ${y * 0.07}px) translateY(-2px)`;
     });
     btn.addEventListener('mouseleave', () => {
       btn.style.transform = '';
@@ -448,6 +482,7 @@
 
   /* ---- Tilt effect on edu cards & project cards ---- */
   function addTilt(selector) {
+    if (prefersReducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll(selector).forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -455,9 +490,9 @@
         const y = e.clientY - rect.top;
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -5;
-        const rotateY = ((x - centerX) / centerX) * 5;
-        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+        const rotateX = ((y - centerY) / centerY) * -2.5;
+        const rotateY = ((x - centerX) / centerX) * 2.5;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
       });
       card.addEventListener('mouseleave', () => {
         card.style.transform = '';
@@ -470,6 +505,7 @@
 
   /* ---- Glowing background orbs (subtle parallax) ---- */
   document.addEventListener('mousemove', (e) => {
+    if (prefersReducedMotion) return;
     const x = (e.clientX / window.innerWidth - 0.5) * 20;
     const y = (e.clientY / window.innerHeight - 0.5) * 20;
     const overlay = document.querySelector('.hero-overlay');
@@ -503,6 +539,13 @@
   if (savedTheme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
   }
+  if (themeToggle) {
+    themeToggle.setAttribute('aria-pressed', String(savedTheme === 'light'));
+  }
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', savedTheme === 'light' ? '#f7f4ed' : '#0b1210');
+  }
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
@@ -510,17 +553,17 @@
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('hp-theme', next);
+      themeToggle.setAttribute('aria-pressed', String(next === 'light'));
       // Update theme-color meta
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
       if (themeMeta) {
-        themeMeta.setAttribute('content', next === 'light' ? '#f4f1ec' : '#040810');
+        themeMeta.setAttribute('content', next === 'light' ? '#f7f4ed' : '#0b1210');
       }
     });
   }
 
   /* ---- Typewriter Cycling Animation ---- */
   const typewriterEl = document.getElementById('typewriter');
-  if (typewriterEl) {
+  if (typewriterEl && !prefersReducedMotion) {
     const phrases = [
       'Snack Product Developer',
       'Snacks Manufacturing Specialist',
@@ -689,7 +732,7 @@
   const tiltCards = document.querySelectorAll('.project-card, .cert-card, .edu-card, .info-card, .testimonial-card, .contact-card, .org-card');
   tiltCards.forEach(card => {
     card.addEventListener('mousemove', (e) => {
-      if (window.innerWidth < 768) return; // Disable on mobile
+      if (window.innerWidth < 768 || prefersReducedMotion) return; // Disable on mobile and for reduced motion
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -748,7 +791,7 @@ document.addEventListener('keydown', function(e) {
 const heroSlides = document.querySelectorAll('.hero-slide');
 let currentSlideIndex = 0;
 
-if (heroSlides.length > 0) {
+if (heroSlides.length > 0 && !prefersReducedMotion) {
   setInterval(() => {
     heroSlides[currentSlideIndex].classList.remove('active');
     currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
@@ -832,7 +875,7 @@ if (btnToggleTimeline && timelineEarlier) {
       // Smooth scroll back up to timeline if user is far down
       const rect = btnToggleTimeline.getBoundingClientRect();
       if (rect.top < 100) {
-        btnToggleTimeline.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        btnToggleTimeline.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
       }
     }
   });
@@ -926,7 +969,7 @@ if (btnToggleGallery) {
     if (!isGalleryExpanded) {
       const secHeader = document.querySelector('.gallery-section .section-header');
       if (secHeader) {
-        secHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        secHeader.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
       }
     }
   });
@@ -993,7 +1036,7 @@ dockButtons.forEach((btn) => {
           const productsTab = document.querySelector('.spec-tab-btn[data-spec-tab="products"]');
           if (productsTab) productsTab.click();
         }
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        targetEl.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
         history.pushState(null, '', targetId);
       }
     }
@@ -1003,4 +1046,106 @@ dockButtons.forEach((btn) => {
 window.addEventListener('scroll', updateQuickDock, { passive: true });
 updateQuickDock();
 
+
+/* ---- Compact portfolio layout: work first, details on demand ---- */
+(() => {
+  const hero = document.getElementById('home');
+  const projects = document.getElementById('projects');
+
+  // Put the strongest proof directly after the introduction.
+  if (hero && projects && hero.nextElementSibling !== projects) {
+    hero.after(projects);
+  }
+
+  const sections = Array.from(document.querySelectorAll('body > section.section'));
+
+  sections.forEach((section) => {
+    const header = section.querySelector('.section-header');
+    if (!header) return;
+
+    header.classList.add('section-header-collapsible');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'section-disclosure';
+    button.setAttribute('aria-expanded', 'false');
+    button.innerHTML = `
+      <span class="section-disclosure-label">Show details</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>`;
+    header.appendChild(button);
+
+    const originalHidden = new Map();
+    const setExpanded = (expanded) => {
+      section.classList.toggle('section-collapsed', !expanded);
+      let current = header;
+
+      // Hide every sibling between the section and its heading. This keeps
+      // background media and content out of the compact state without moving
+      // or deleting any of the original page content.
+      while (current && current !== section) {
+        const parent = current.parentElement;
+        if (!parent) break;
+
+        Array.from(parent.children).forEach((sibling) => {
+          if (sibling === current) return;
+          if (!originalHidden.has(sibling)) {
+            originalHidden.set(sibling, sibling.hidden);
+          }
+          sibling.hidden = !expanded || originalHidden.get(sibling);
+        });
+        current = parent;
+      }
+
+      button.setAttribute('aria-expanded', String(expanded));
+      button.querySelector('.section-disclosure-label').textContent =
+        expanded ? 'Hide details' : 'Show details';
+    };
+
+    // Keep the projects section open as the first portfolio proof; let
+    // visitors expand every other section only when they want its details.
+    setExpanded(section.id === 'projects');
+
+    button.addEventListener('click', () => {
+      setExpanded(button.getAttribute('aria-expanded') !== 'true');
+    });
+  });
+
+  const expandHashTarget = () => {
+    if (!window.location.hash) return;
+    let target;
+    try {
+      target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    } catch {
+      return;
+    }
+    const section = target && target.closest('body > section.section');
+    const disclosure = section && section.querySelector('.section-disclosure');
+    if (disclosure && disclosure.getAttribute('aria-expanded') !== 'true') {
+      disclosure.click();
+    }
+  };
+
+  // Navbar, quick-dock, and direct in-page links continue to work with
+  // collapsed sections, including browser back/forward navigation.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest && event.target.closest('a[href^="#"]');
+    if (!link) return;
+    const targetId = link.getAttribute('href').slice(1);
+    let target;
+    try {
+      target = document.getElementById(decodeURIComponent(targetId));
+    } catch {
+      return;
+    }
+    const section = target && target.closest('body > section.section');
+    const disclosure = section && section.querySelector('.section-disclosure');
+    if (disclosure && disclosure.getAttribute('aria-expanded') !== 'true') {
+      disclosure.click();
+    }
+  });
+
+  window.addEventListener('hashchange', expandHashTarget);
+  expandHashTarget();
+})();
 
