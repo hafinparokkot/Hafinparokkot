@@ -1021,3 +1021,105 @@ window.addEventListener('scroll', updateQuickDock, { passive: true });
 updateQuickDock();
 
 
+/* ---- Compact portfolio layout: work first, details on demand ---- */
+(() => {
+  const hero = document.getElementById('home');
+  const projects = document.getElementById('projects');
+
+  // Put the strongest proof directly after the introduction.
+  if (hero && projects && hero.nextElementSibling !== projects) {
+    hero.after(projects);
+  }
+
+  const sections = Array.from(document.querySelectorAll('body > section.section'));
+
+  sections.forEach((section) => {
+    const header = section.querySelector('.section-header');
+    if (!header) return;
+
+    header.classList.add('section-header-collapsible');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'section-disclosure';
+    button.setAttribute('aria-expanded', 'false');
+    button.innerHTML = `
+      <span class="section-disclosure-label">Show details</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>`;
+    header.appendChild(button);
+
+    const originalHidden = new Map();
+    const setExpanded = (expanded) => {
+      section.classList.toggle('section-collapsed', !expanded);
+      let current = header;
+
+      // Hide every sibling between the section and its heading. This keeps
+      // background media and content out of the compact state without moving
+      // or deleting any of the original page content.
+      while (current && current !== section) {
+        const parent = current.parentElement;
+        if (!parent) break;
+
+        Array.from(parent.children).forEach((sibling) => {
+          if (sibling === current) return;
+          if (!originalHidden.has(sibling)) {
+            originalHidden.set(sibling, sibling.hidden);
+          }
+          sibling.hidden = !expanded || originalHidden.get(sibling);
+        });
+        current = parent;
+      }
+
+      button.setAttribute('aria-expanded', String(expanded));
+      button.querySelector('.section-disclosure-label').textContent =
+        expanded ? 'Hide details' : 'Show details';
+    };
+
+    // Keep the projects section open as the first portfolio proof; let
+    // visitors expand every other section only when they want its details.
+    setExpanded(section.id === 'projects');
+
+    button.addEventListener('click', () => {
+      setExpanded(button.getAttribute('aria-expanded') !== 'true');
+    });
+  });
+
+  const expandHashTarget = () => {
+    if (!window.location.hash) return;
+    let target;
+    try {
+      target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+    } catch {
+      return;
+    }
+    const section = target && target.closest('body > section.section');
+    const disclosure = section && section.querySelector('.section-disclosure');
+    if (disclosure && disclosure.getAttribute('aria-expanded') !== 'true') {
+      disclosure.click();
+    }
+  };
+
+  // Navbar, quick-dock, and direct in-page links continue to work with
+  // collapsed sections, including browser back/forward navigation.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest && event.target.closest('a[href^="#"]');
+    if (!link) return;
+    const targetId = link.getAttribute('href').slice(1);
+    let target;
+    try {
+      target = document.getElementById(decodeURIComponent(targetId));
+    } catch {
+      return;
+    }
+    const section = target && target.closest('body > section.section');
+    const disclosure = section && section.querySelector('.section-disclosure');
+    if (disclosure && disclosure.getAttribute('aria-expanded') !== 'true') {
+      disclosure.click();
+    }
+  });
+
+  window.addEventListener('hashchange', expandHashTarget);
+  expandHashTarget();
+})();
+
