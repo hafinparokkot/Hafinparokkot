@@ -93,18 +93,34 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileLinks = document.querySelectorAll('.mobile-link');
 
+  if (hamburger && mobileMenu) {
+    hamburger.setAttribute('aria-controls', 'mobileMenu');
+    hamburger.setAttribute('aria-expanded', 'false');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+  }
+
+  function setMobileMenuOpen(isOpen) {
+    if (!hamburger || !mobileMenu) return;
+    hamburger.classList.toggle('open', isOpen);
+    mobileMenu.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileMenu.classList.toggle('open');
-    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    setMobileMenuOpen(!mobileMenu.classList.contains('open'));
   });
 
   mobileLinks.forEach((link) => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('open');
-      mobileMenu.classList.remove('open');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', () => setMobileMenuOpen(false));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+      setMobileMenuOpen(false);
+      hamburger.focus();
+    }
   });
 
   /* ---- Back to top ---- */
@@ -117,18 +133,21 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
     const container = document.getElementById('particles');
     if (!container) return;
 
-    const colors = ['#00d4aa', '#f0a500', '#3b82f6', '#8b5cf6'];
-    const count = 35;
+    const palette = getComputedStyle(document.documentElement);
+    const colors = ['--accent-primary', '--accent-secondary', '--accent-blue']
+      .map((token) => palette.getPropertyValue(token).trim())
+      .filter(Boolean);
+    const count = window.matchMedia('(max-width: 700px)').matches ? 8 : 18;
 
     for (let i = 0; i < count; i++) {
       const p = document.createElement('div');
       p.classList.add('particle');
 
-      const size = Math.random() * 4 + 1.5;
+      const size = Math.random() * 2.5 + 1.2;
       const color = colors[Math.floor(Math.random() * colors.length)];
       const left = Math.random() * 100;
       const delay = Math.random() * 15;
-      const duration = Math.random() * 12 + 8;
+      const duration = Math.random() * 14 + 12;
 
       p.style.cssText = `
         width: ${size}px;
@@ -454,7 +473,7 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
       const rect = btn.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) translateY(-3px)`;
+      btn.style.transform = `translate(${x * 0.07}px, ${y * 0.07}px) translateY(-2px)`;
     });
     btn.addEventListener('mouseleave', () => {
       btn.style.transform = '';
@@ -463,7 +482,7 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
 
   /* ---- Tilt effect on edu cards & project cards ---- */
   function addTilt(selector) {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     document.querySelectorAll(selector).forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -471,9 +490,9 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
         const y = e.clientY - rect.top;
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -5;
-        const rotateY = ((x - centerX) / centerX) * 5;
-        card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+        const rotateX = ((y - centerY) / centerY) * -2.5;
+        const rotateY = ((x - centerX) / centerX) * 2.5;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
       });
       card.addEventListener('mouseleave', () => {
         card.style.transform = '';
@@ -520,6 +539,13 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
   if (savedTheme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
   }
+  if (themeToggle) {
+    themeToggle.setAttribute('aria-pressed', String(savedTheme === 'light'));
+  }
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', savedTheme === 'light' ? '#f7f4ed' : '#0b1210');
+  }
 
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
@@ -527,10 +553,10 @@ const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduc
       const next = current === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('hp-theme', next);
+      themeToggle.setAttribute('aria-pressed', String(next === 'light'));
       // Update theme-color meta
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
       if (themeMeta) {
-        themeMeta.setAttribute('content', next === 'light' ? '#f4f1ec' : '#040810');
+        themeMeta.setAttribute('content', next === 'light' ? '#f7f4ed' : '#0b1210');
       }
     });
   }
